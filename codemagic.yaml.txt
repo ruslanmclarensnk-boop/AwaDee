@@ -1,0 +1,16 @@
+workflows:
+  react-native-android:
+    name: React Native Android
+    max_build_duration: 120
+    environment:
+      node: 18.17.0
+    scripts:
+      - name: Install dependencies
+        script: npm install --legacy-peer-deps
+      - name: Build Android Release
+        script: |
+          npx expo prebuild --platform android --clean
+          cd android
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
