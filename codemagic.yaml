@@ -8,7 +8,6 @@ workflows:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
       - name: Build Android Release
-        - name: Build Android Release
         script: |
           npx expo prebuild --platform android --clean
           cd android
