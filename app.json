@@ -22,7 +22,8 @@
       },
       "edgeToEdgeEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
-      "package": "com.ruslanmclaren.AwaDee"
+      "package": "com.ruslanmclaren.AwaDee",
+"permissions": ["RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
