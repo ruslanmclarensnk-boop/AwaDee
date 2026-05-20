@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-const AWA_IMG = require('./assets/awa.png');
-const DEE_IMG = require('./assets/dee.png');
+const AWA_IMG = null;
+const DEE_IMG = null;
 const AnimatedBubble = ({ children, style }) => {
   const anim = useRef(new Animated.Value(0)).current;
   React.useEffect(() => {
