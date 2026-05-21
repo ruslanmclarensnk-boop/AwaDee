@@ -7,6 +7,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 const AWA_IMG = null;
 const DEE_IMG = null;
@@ -101,6 +102,7 @@ const QWEN_KEY = 'sk-407891cf66dc4400a38b6ba77997d92f';
 const DEEPSEEK_KEY = 'sk-5c4f3d2fd43f4056b31fe793691d50d9';
 const GROQ_KEY = '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';
 const ASSEMBLY_KEY = '1800190473d648ff8936dad11adae406';
+const YANDEX_STT_KEY = 'AQVN03HATGCgymuLbyzh98BHXHdIPMny1WjA4Kez';
 
 const MiniRing = ({ value, max, color, label, emoji }) => {
   const size = 64;
@@ -442,7 +444,11 @@ export default function App() {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) return;
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      const { recording } = await Audio.Recording.createAsync({
+        android: { extension: '.wav', outputFormat: 2, audioEncoder: 3, sampleRate: 16000, numberOfChannels: 1, bitRate: 256000 },
+        ios: { extension: '.wav', audioQuality: 127, sampleRate: 16000, numberOfChannels: 1, bitRate: 128000, linearPCMBitDepth: 16, linearPCMIsBigEndian: false, linearPCMIsFloat: false },
+        web: {},
+      });
       audioRecorderRef.current = recording;
       setIsRecording(true);
     } catch (e) { console.log('Ошибка записи:', e); }
@@ -454,29 +460,21 @@ export default function App() {
       await audioRecorderRef.current?.stopAndUnloadAsync();
       const uri = audioRecorderRef.current?.getURI();
       if (!uri) return;
-      const fileResp = await fetch(uri);
-      const blob = await fileResp.blob();
-      const uploadRes = await fetch('https://api.assemblyai.com/v2/upload', {
+      const base64Audio = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const audioBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0));
+      const yandexRes = await fetch('https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?lang=ru-RU&format=lpcm&sampleRateHertz=16000', {
         method: 'POST',
-        headers: { authorization: ASSEMBLY_KEY, 'content-type': 'application/octet-stream' },
-        body: blob,
+        headers: {
+          'Authorization': 'Api-Key ' + YANDEX_STT_KEY,
+          'Content-Type': 'audio/x-pcm;bit=16;rate=16000',
+        },
+        body: audioBuffer,
       });
-      const uploadData = await uploadRes.json();
-      const transcriptRes = await fetch('https://api.assemblyai.com/v2/transcript', {
-        method: 'POST',
-        headers: { authorization: ASSEMBLY_KEY, 'content-type': 'application/json' },
-        body: JSON.stringify({ audio_url: uploadData.upload_url, language_code: 'ru' }),
-      });
-      const transcriptData = await transcriptRes.json();
-      const poll = async () => {
-        const res = await fetch('https://api.assemblyai.com/v2/transcript/' + transcriptData.id, { headers: { authorization: ASSEMBLY_KEY } });
-        const data = await res.json();
-        if (data.status === 'completed') { sendMessage(data.text, activeBot, true); }
-        else if (data.status === 'error') { sendMessage('Не удалось распознать голос 😔', activeBot, true); }
-        else { setTimeout(poll, 1000); }
-      };
-      poll();
-    } catch (e) { console.log('Ошибка:', e); }
+      const yandexData = await yandexRes.json();
+      const text = yandexData.result;
+      if (text) { sendMessage(text, activeBot, true); }
+      else { sendMessage('Не удалось распознать голос 😔 ' + JSON.stringify(yandexData), activeBot, true); }
+    } catch (e) { console.log('Ошибка:', e); sendMessage('Ошибка записи 😔', activeBot, true); }
   };
 
   const renderOnboarding = () => {
