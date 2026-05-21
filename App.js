@@ -917,7 +917,7 @@ setMessages(prev => ({
   );
 };
 
-  const renderAwaSidebar
+const renderAwaSidebar = () => (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
       <TouchableOpacity onPress={() => { setActiveBot('dee'); setCurrentScreen('chat'); closeMenu(); }} style={[styles.switchBtn, { backgroundColor: C.dee + '15', borderColor: C.dee + '40' }]}>
         <Ionicons name="swap-horizontal-outline" size={20} color={C.dee} />
