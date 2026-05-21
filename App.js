@@ -1662,4 +1662,10 @@ const styles = StyleSheet.create({
   onTheGoScreen: { flex: 1 },
   onTheGoHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 56, paddingBottom: 12 },
   onTheGoBackText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  onTheGoTitle: { fontSize: 16,
+  onTheGoTitle: { fontSize: 16, fontWeight: '900', color: '#fff' },
+  onTheGoChat: { flex: 1, marginHorizontal: 12, backgroundColor: 'rgba(0,0,0,0.12)', borderRadius: 20 },
+  onTheGoEmpty: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  onTheGoEmptyText: { color: 'rgba(255,255,255,0.7)', fontSize: 14, textAlign: 'center' },
+  onTheGoBottom: { padding: 16, alignItems: 'center', gap: 14 },
+  onTheGoMicBtn: { width: 110, height: 110, borderRadius: 55, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 16, elevation: 10 },
+});
