@@ -8,13 +8,13 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "plugins": [
-      [
-        "expo-audio",
-        {
-          "microphonePermission": "Разреши AwaDee доступ к микрофону"
-        }
-      ]
-    ],
+  [
+    "expo-av",
+    {
+      "microphonePermission": "Разреши AwaDee доступ к микрофону"
+    }
+  ]
+],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
