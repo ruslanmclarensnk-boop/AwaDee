@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Audio } from 'expo-av';
 const AWA_IMG = null;
 const DEE_IMG = null;
 const AnimatedBubble = ({ children, style }) => {
@@ -301,6 +302,8 @@ const [meditationDone, setMeditationDone] = useState(false);
 const meditationAnim = useRef(new Animated.Value(1)).current;
 const meditationTimer = useRef(null);
   const [onTheGoInput, setOnTheGoInput] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const audioRecorderRef = useRef(null);
 
   const [onTheGoMessages, setOnTheGoMessages] = useState([]);
   const scrollRef = useRef(null);
@@ -838,7 +841,47 @@ setMessages(prev => ({
     </Modal>
   );
 
-  const renderOnTheGo = () => (
+  const startRecording = async () => {
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) return;
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      audioRecorderRef.current = recording;
+      setIsRecording(true);
+    } catch (e) { console.log('Ошибка записи:', e); }
+  };
+
+  const stopRecording = async () => {
+    try {
+      setIsRecording(false);
+      await audioRecorderRef.current?.stopAndUnloadAsync();
+      const uri = audioRecorderRef.current?.getURI();
+      if (!uri) return;
+      const fileResp = await fetch(uri);
+      const blob = await fileResp.blob();
+      const uploadRes = await fetch('https://api.assemblyai.com/v2/upload', {
+        method: 'POST',
+        headers: { authorization: '1800190473d648ff8936dad11adae406', 'content-type': 'application/octet-stream' },
+        body: blob,
+      });
+      const uploadData = await uploadRes.json();
+      const transcriptRes = await fetch('https://api.assemblyai.com/v2/transcript', {
+        method: 'POST',
+        headers: { authorization: '1800190473d648ff8936dad11adae406', 'content-type': 'application/json' },
+        body: JSON.stringify({ audio_url: uploadData.upload_url, language_code: 'ru' }),
+      });
+      const transcriptData = await transcriptRes.json();
+      const poll = async () => {
+        const res = await fetch('https://api.assemblyai.com/v2/transcript/' + transcriptData.id, { headers: { authorization: '1800190473d648ff8936dad11adae406' } });
+        const data = await res.json();
+        if (data.status === 'completed') { sendMessage(data.text, activeBot, true); }
+        else if (data.status === 'error') { sendMessage('Не удалось распознать голос 😔', activeBot, true); }
+        else { setTimeout(poll, 1000); }
+      };
+      poll();
+    } catch (e) { console.log('Ошибка:', e); }
+  };
     <SafeAreaView style={[styles.onTheGoScreen, { backgroundColor: theme }]}>
       <StatusBar barStyle="light-content" />
       <View style={styles.onTheGoHeader}>
@@ -860,10 +903,15 @@ setMessages(prev => ({
         ))}
         {isLoading && <View style={styles.bubbleWrap}><View style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 20, padding: 12, paddingHorizontal: 16 }}><Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>✍️ печатает...</Text></View></View>}
       </ScrollView>
-    <View style={styles.onTheGoBottom}>
-  <TouchableOpacity style={styles.onTheGoMicBtn} onPress={() => sendMessage('🎙️ голосовое сообщение', activeBot, true)}>
-    <Ionicons name="mic-outline" size={44} color={theme} />
+  <View style={styles.onTheGoBottom}>
+  <TouchableOpacity
+    style={[styles.onTheGoMicBtn, isRecording && { backgroundColor: theme }]}
+    onPressIn={startRecording}
+    onPressOut={stopRecording}
+  >
+    <Ionicons name={isRecording ? 'mic' : 'mic-outline'} size={44} color={isRecording ? '#fff' : theme} />
   </TouchableOpacity>
+  {isRecording && <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginTop: 8 }}>Говори...</Text>}
 </View>
     </SafeAreaView>
   );
