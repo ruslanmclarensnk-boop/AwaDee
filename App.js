@@ -444,11 +444,7 @@ export default function App() {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) return;
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      const { recording } = await Audio.Recording.createAsync({
-        android: { extension: '.wav', outputFormat: 2, audioEncoder: 3, sampleRate: 16000, numberOfChannels: 1, bitRate: 256000 },
-        ios: { extension: '.wav', audioQuality: 127, sampleRate: 16000, numberOfChannels: 1, bitRate: 128000, linearPCMBitDepth: 16, linearPCMIsBigEndian: false, linearPCMIsFloat: false },
-        web: {},
-      });
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
       audioRecorderRef.current = recording;
       setIsRecording(true);
     } catch (e) { console.log('Ошибка записи:', e); }
@@ -456,25 +452,18 @@ export default function App() {
     const stopRecording = async () => {
     try {
       setIsRecording(false);
-      await new Promise(r => setTimeout(r, 300));
       await audioRecorderRef.current?.stopAndUnloadAsync();
       const uri = audioRecorderRef.current?.getURI();
       if (!uri) return;
-      const base64Audio = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-      const audioBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0));
-      const pcmData = audioBuffer.slice(44);
-      const yandexRes = await fetch('https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?lang=ru-RU&format=lpcm&sampleRateHertz=16000', {
+      const formData = new FormData();
+      formData.append('file', { uri: uri, type: 'audio/m4a', name: 'audio.m4a' });
+      const res = await fetch('http://89.125.24.180:3000/transcribe', {
         method: 'POST',
-        headers: {
-          'Authorization': 'Api-Key ' + YANDEX_STT_KEY,
-          'Content-Type': 'audio/x-pcm;bit=16;rate=16000',
-        },
-        body: pcmData.buffer,
+        body: formData,
       });
-      const yandexData = await yandexRes.json();
-      const text = yandexData.result;
-      if (text) { sendMessage(text, activeBot, true); }
-      else { sendMessage('Не удалось распознать голос 😔 ' + JSON.stringify(yandexData), activeBot, true); }
+      const data = await res.json();
+      if (data.text) { sendMessage(data.text, activeBot, true); }
+      else { sendMessage('Не удалось распознать 😔', activeBot, true); }
     } catch (e) { console.log('Ошибка:', e); sendMessage('Ошибка записи 😔', activeBot, true); }
   };
 
