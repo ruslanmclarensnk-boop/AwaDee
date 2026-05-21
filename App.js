@@ -439,29 +439,32 @@ export default function App() {
     if (!disclaimerShown) { setShowDisclaimer(true); setDisclaimerShown(true); }
   };
 
-  const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
+    const { recording } = await Audio.Recording.createAsync({
+        android: { extension: '.wav', outputFormat: 2, audioEncoder: 3, sampleRate: 16000, numberOfChannels: 1, bitRate: 256000 },
+        ios: { extension: '.wav', audioQuality: 127, sampleRate: 16000, numberOfChannels: 1, bitRate: 128000, linearPCMBitDepth: 16, linearPCMIsBigEndian: false, linearPCMIsFloat: false },
+      });
       audioRecorderRef.current = recording;
       setIsRecording(true);
     } catch (e) { console.log('Ошибка записи:', e); }
   };
 
-  const stopRecording = async () => {
+    const stopRecording = async () => {
     try {
       setIsRecording(false);
+      await new Promise(r => setTimeout(r, 300));
       await audioRecorderRef.current?.stopAndUnloadAsync();
       const uri = audioRecorderRef.current?.getURI();
       if (!uri) return;
       const base64Audio = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
       const audioBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0));
+      const pcmData = audioBuffer.slice(44);
       const yandexRes = await fetch('https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?lang=ru-RU&format=lpcm&sampleRateHertz=16000', {
         method: 'POST',
         headers: {
           'Authorization': 'Api-Key ' + YANDEX_STT_KEY,
           'Content-Type': 'audio/x-pcm;bit=16;rate=16000',
         },
-        body: audioBuffer,
+        body: pcmData.buffer,
       });
       const yandexData = await yandexRes.json();
       const text = yandexData.result;
