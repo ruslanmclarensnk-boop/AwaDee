@@ -439,16 +439,9 @@ export default function App() {
     if (!disclaimerShown) { setShowDisclaimer(true); setDisclaimerShown(true); }
   };
 
-  const startRecording = async () => {
-    try {
-      const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) return;
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      const { recording } = await Audio.Recording.createAsync({
-        android: { extension: '.wav', outputFormat: 2, audioEncoder: 3, sampleRate: 16000, numberOfChannels: 1, bitRate: 256000 },
-        ios: { extension: '.wav', audioQuality: 127, sampleRate: 16000, numberOfChannels: 1, bitRate: 128000, linearPCMBitDepth: 16, linearPCMIsBigEndian: false, linearPCMIsFloat: false },
-        web: {},
-      });
+  const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
       audioRecorderRef.current = recording;
       setIsRecording(true);
     } catch (e) { console.log('Ошибка записи:', e); }
