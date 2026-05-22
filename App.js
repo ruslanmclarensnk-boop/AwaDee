@@ -476,7 +476,6 @@ export default function App() {
       );
       audioRecorderRef.current = recording;
       setIsRecording(true);
-      sendMessage('🎙 Запись началась', activeBot, true);
     } catch (e) {
       sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
     }
