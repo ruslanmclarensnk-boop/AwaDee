@@ -847,6 +847,8 @@ export default function App() {
   </Animated.View>
   {!isRecording && <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 10 }}>Удержи для записи</Text>}
 </View>
+    </SafeAreaView>
+  );
 
   const renderAwaSidebar = () => (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
