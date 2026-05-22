@@ -212,6 +212,8 @@ export default function App() {
   const scrollRef = useRef(null);
   const onTheGoScrollRef = useRef(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const waveAnims = useRef([...Array(6)].map(() => new Animated.Value(0.3))).current;
 
   React.useEffect(() => {
   if (isRecording) {
