@@ -829,17 +829,26 @@ export default function App() {
         {isLoading && <View style={styles.bubbleWrap}><View style={{ backgroundColor: '#F0F0F0', borderRadius: 20, padding: 12, paddingHorizontal: 16 }}><Text style={{ color: DEFAULT_C.sub, fontSize: 15 }}>✍️ печатает...</Text></View></View>}
       </ScrollView>
       <View style={styles.onTheGoBottom}>
-        <TouchableOpacity
-          style={[styles.onTheGoMicBtn, isRecording && { backgroundColor: theme }]}
-          onPressIn={startRecording}
-          onPressOut={stopRecording}
-        >
-          <Ionicons name={isRecording ? 'mic' : 'mic-outline'} size={44} color={isRecording ? '#fff' : theme} />
-        </TouchableOpacity>
-        {isRecording && <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600', marginTop: 8 }}>Говори...</Text>}
-      </View>
-    </SafeAreaView>
-  );
+  {isRecording && (
+    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30, marginBottom: 20, gap: 4 }}>
+      <Ionicons name="mic" size={16} color="#fff" style={{ marginRight: 6 }} />
+      {waveAnims.map((anim, i) => (
+        <Animated.View key={i} style={{ width: 4, borderRadius: 3, backgroundColor: '#fff', height: anim.interpolate({ inputRange: [0.3, 1], outputRange: [6, 24] }) }} />
+      ))}
+      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '600', marginLeft: 6 }}>Запись...</Text>
+    </View>
+  )}
+  <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+    <TouchableOpacity
+      style={[styles.onTheGoMicBtn, isRecording && { backgroundColor: 'rgba(255,255,255,0.25)', borderWidth: 3, borderColor: '#fff' }]}
+      onPressIn={startRecording}
+      onPressOut={stopRecording}
+    >
+      <Ionicons name={isRecording ? 'mic' : 'mic-outline'} size={44} color={isRecording ? '#fff' : theme} />
+    </TouchableOpacity>
+  </Animated.View>
+  {!isRecording && <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 10 }}>Удержи для записи</Text>}
+</View>
 
   const renderAwaSidebar = () => (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
