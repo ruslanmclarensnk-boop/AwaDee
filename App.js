@@ -804,53 +804,86 @@ export default function App() {
     </Modal>
   );
 
-  const renderOnTheGo = () => (
-    <SafeAreaView style={[styles.onTheGoScreen, { backgroundColor: theme }]}>
-      <StatusBar barStyle="light-content" />
-      <View style={styles.onTheGoHeader}>
-        <TouchableOpacity onPress={() => setOnTheGoOpen(false)} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Ionicons name="arrow-back-outline" size={22} color="#fff" />
-          <Text style={styles.onTheGoBackText}>Назад</Text>
-        </TouchableOpacity>
-        <Text style={styles.onTheGoTitle}>{activeBot === 'awa' ? '🍊 Awa' : '💙 Dee'} · На ходу</Text>
-        <View style={{ width: 60 }} />
-      </View>
-      <ScrollView ref={onTheGoScrollRef} style={[styles.onTheGoChat, { backgroundColor: '#fff' }]} contentContainerStyle={{ padding: 12, paddingBottom: 16 }} onContentSizeChange={() => onTheGoScrollRef.current?.scrollToEnd({ animated: false })}>
-        {onTheGoMessages.length === 0 && <View style={styles.onTheGoEmpty}><Text style={styles.onTheGoEmptyText}>Нажми микрофон или напиши сообщение 👇</Text></View>}
-        {onTheGoMessages.map(msg => (
-          <View key={msg.id} style={[styles.bubbleWrap, msg.from === 'user' && { alignItems: 'flex-end' }]}>
-            <View style={[styles.bubble, msg.from === 'user' ? { backgroundColor: theme, borderBottomRightRadius: 4 } : { backgroundColor: '#F0F0F0', borderBottomLeftRadius: 4 }]}>
-              <Text style={[styles.bubbleText, { color: msg.from === 'user' ? '#fff' : '#1A1A1A' }]}>{msg.text}</Text>
-            </View>
-          </View>
-        ))}
-        {isLoading && <View style={styles.bubbleWrap}><View style={{ backgroundColor: '#F0F0F0', borderRadius: 20, padding: 12, paddingHorizontal: 16 }}><Text style={{ color: DEFAULT_C.sub, fontSize: 15 }}>✍️ печатает...</Text></View></View>}
-      </ScrollView>
-      <View style={styles.onTheGoBottom}>
-  {isRecording && (
-    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30, marginBottom: 20, gap: 4 }}>
-      <Ionicons name="mic" size={16} color="#fff" style={{ marginRight: 6 }} />
-      {waveAnims.map((anim, i) => (
-        <Animated.View key={i} style={{ width: 4, borderRadius: 3, backgroundColor: '#fff', height: anim.interpolate({ inputRange: [0.3, 1], outputRange: [6, 24] }) }} />
-      ))}
-      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '600', marginLeft: 6 }}>Запись...</Text>
+const renderOnTheGo = () => (
+  <SafeAreaView style={[styles.onTheGoScreen, { backgroundColor: theme }]}>
+    <StatusBar barStyle="light-content" />
+    <View style={styles.onTheGoHeader}>
+      <TouchableOpacity onPress={() => setOnTheGoOpen(false)} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <Ionicons name="arrow-back-outline" size={22} color="#fff" />
+        <Text style={styles.onTheGoBackText}>Назад</Text>
+      </TouchableOpacity>
+      <Text style={styles.onTheGoTitle}>{activeBot === 'awa' ? '🍊 Awa' : '💙 Dee'} · На ходу</Text>
+      <View style={{ width: 60 }} />
     </View>
-  )}
-  <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-    <TouchableOpacity
-      style={[styles.onTheGoMicBtn, isRecording && { backgroundColor: 'rgba(255,255,255,0.25)', borderWidth: 3, borderColor: '#fff' }]}
-      onPressIn={startRecording}
-      onPressOut={stopRecording}
-    >
-      <Ionicons name={isRecording ? 'mic' : 'mic-outline'} size={44} color={isRecording ? '#fff' : theme} />
-    </TouchableOpacity>
-  </Animated.View>
-  {!isRecording && <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 10 }}>Удержи для записи</Text>}
-</View>
-    </SafeAreaView>
-  );
+    <ScrollView ref={onTheGoScrollRef} style={[styles.onTheGoChat, { backgroundColor: '#fff' }]} contentContainerStyle={{ padding: 12, paddingBottom: 16 }} onContentSizeChange={() => onTheGoScrollRef.current?.scrollToEnd({ animated: false })}>
+      {onTheGoMessages.length === 0 && <View style={styles.onTheGoEmpty}><Text style={styles.onTheGoEmptyText}>Нажми микрофон или напиши сообщение 👇</Text></View>}
+      {onTheGoMessages.map(msg => (
+        <View key={msg.id} style={[styles.bubbleWrap, msg.from === 'user' && { alignItems: 'flex-end' }]}>
+          <View style={[styles.bubble, msg.from === 'user' ? { backgroundColor: theme, borderBottomRightRadius: 4 } : { backgroundColor: '#F0F0F0', borderBottomLeftRadius: 4 }]}>
+            <Text style={[styles.bubbleText, { color: msg.from === 'user' ? '#fff' : '#1A1A1A' }]}>{msg.text}</Text>
+          </View>
+        </View>
+      ))}
+      {isLoading && <View style={styles.bubbleWrap}><View style={{ backgroundColor: '#F0F0F0', borderRadius: 20, padding: 12, paddingHorizontal: 16 }}><Text style={{ color: DEFAULT_C.sub, fontSize: 15 }}>✍️ печатает...</Text></View></View>}
+    </ScrollView>
+    <View style={styles.onTheGoBottom}>
+      {isRecording && (
+        <View style={styles.onTheGoWaveBar}>
+          {waveAnims.map((anim, i) => (
+            <Animated.View
+              key={i}
+              style={[
+                styles.onTheGoWaveStick,
+                {
+                  transform: [{ scaleY: anim }],
+                  backgroundColor: activeBot === 'awa' ? '#FF6B35' : '#4A90D9',
+                },
+              ]}
+            />
+          ))}
+          <Text style={[styles.onTheGoWaveLabel, { color: activeBot === 'awa' ? '#FF6B35' : '#4A90D9' }]}>
+            Говорю...
+          </Text>
+        </View>
+      )}
+      <Animated.View
+        style={[
+          styles.onTheGoMicBtn,
+          {
+            transform: [{ scale: pulseAnim }],
+            backgroundColor: isRecording
+              ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+              : '#FFFFFF',
+            shadowColor: isRecording
+              ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+              : '#000',
+            shadowOpacity: isRecording ? 0.6 : 0.15,
+            shadowRadius: isRecording ? 18 : 6,
+            elevation: isRecording ? 12 : 4,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={isRecording ? stopRecording : startRecording}
+          activeOpacity={0.85}
+          style={styles.onTheGoMicTouchable}
+        >
+          <Ionicons
+            name={isRecording ? 'stop' : 'mic'}
+            size={36}
+            color={
+              isRecording
+                ? '#FFFFFF'
+                : (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+            }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
+  </SafeAreaView>
+);
 
-  const renderAwaSidebar = () => (
+const renderAwaSidebar = () => (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
       <TouchableOpacity onPress={() => { setActiveBot('dee'); setCurrentScreen('chat'); closeMenu(); }} style={[styles.switchBtn, { backgroundColor: C.dee + '15', borderColor: C.dee + '40' }]}>
         <Ionicons name="swap-horizontal-outline" size={20} color={C.dee} />
