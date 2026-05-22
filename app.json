@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "AwaDee",
@@ -8,13 +9,13 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "plugins": [
-  [
-    "expo-av",
-    {
-      "microphonePermission": "Разреши AwaDee доступ к микрофону"
-    }
-  ]
-],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Разреши AwaDee доступ к микрофону"
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -24,6 +25,7 @@
       "supportsTablet": true
     },
     "android": {
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -31,7 +33,9 @@
       "edgeToEdgeEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
       "package": "com.ruslanmclaren.AwaDee",
-      "permissions": ["RECORD_AUDIO"]
+      "permissions": [
+        "RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
