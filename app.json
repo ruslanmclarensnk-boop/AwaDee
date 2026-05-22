@@ -1,9 +1,8 @@
-
 {
   "expo": {
     "name": "AwaDee",
     "slug": "AwaDee",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +24,7 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 2,
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
