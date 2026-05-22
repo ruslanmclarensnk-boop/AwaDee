@@ -441,13 +441,19 @@ export default function App() {
 
       const startRecording = async () => {
     try {
+      sendMessage('🎙 Запрашиваю разрешение...', activeBot, true);
       const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) return;
+      if (!granted) { sendMessage('❌ Нет разрешения на микрофон', activeBot, true); return; }
+      sendMessage('✅ Разрешение есть', activeBot, true);
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
+      sendMessage('✅ Режим аудио установлен', activeBot, true);
       const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      sendMessage('✅ Запись началась', activeBot, true);
       audioRecorderRef.current = recording;
       setIsRecording(true);
-    } catch (e) { console.log('Ошибка записи:', e); }
+    } catch (e) { 
+      sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
+    }
   };
     const stopRecording = async () => {
     try {
