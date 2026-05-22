@@ -214,6 +214,23 @@ export default function App() {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   React.useEffect(() => {
+  if (isRecording) {
+    Animated.loop(Animated.sequence([
+      Animated.timing(pulseAnim, { toValue: 1.15, duration: 500, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+    ])).start();
+    waveAnims.forEach((anim, i) => {
+      Animated.loop(Animated.sequence([
+        Animated.timing(anim, { toValue: 1, duration: 250 + i * 80, useNativeDriver: false }),
+        Animated.timing(anim, { toValue: 0.3, duration: 250 + i * 80, useNativeDriver: false }),
+      ])).start();
+    });
+  } else {
+    pulseAnim.stopAnimation();
+    pulseAnim.setValue(1);
+    waveAnims.forEach(a => { a.stopAnimation(); a.setValue(0.3); });
+  }
+}, [isRecording]);React.useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', e => setKeyboardHeight(e.endCoordinates.height));
     const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardHeight(0));
     return () => { show.remove(); hide.remove(); };
