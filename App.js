@@ -462,45 +462,55 @@ export default function App() {
   };
 
       const startRecording = async () => {
-    try {
-      sendMessage('🎙 Запрашиваю разрешение...', activeBot, true);
-      const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) { sendMessage('❌ Нет разрешения на микрофон', activeBot, true); return; }
-      sendMessage('✅ Разрешение есть', activeBot, true);
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      sendMessage('✅ Режим аудио установлен', activeBot, true);
-      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-      sendMessage('✅ Запись началась', activeBot, true);
-      audioRecorderRef.current = recording;
-      setIsRecording(true);
-    } catch (e) { 
-      sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
+  try {
+    const { granted } = await Audio.requestPermissionsAsync();
+    if (!granted) {
+      sendMessage('❌ Нет разрешения на микрофон', activeBot, true);
+      return;
     }
-  };
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      playsInSilentModeIOS: true
+    });
+
+    const { recording } = await Audio.Recording.createAsync(
+      Audio.RecordingOptionsPresets.HIGH_QUALITY
+    );
+
+    audioRecorderRef.current = recording;
+    setIsRecording(true);
+
+    sendMessage('🎙 Запись началась', activeBot, true);
+
+  } catch (e) {
+    sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
+  }
+};
+
     const stopRecording = async () => {
-    try {
-      const recording = audioRecorderRef.current;
-      if (!recording) { sendMessage('Нет записи 😔', activeBot, true); return; }
-      setIsRecording(false);
-      await recording.stopAndUnloadAsync();
-      audioRecorderRef.current = null;
-      const uri = recording.getURI();
-      console.log('URI:', uri);
-      if (!uri) { sendMessage('URI пустой 😔', activeBot, true); return; }
-      const formData = new FormData();
-      formData.append('file', { uri: uri, type: 'audio/m4a', name: 'audio.m4a' });
-      const res = await fetch('http://89.125.24.180:3000/transcribe', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.text) { sendMessage(data.text, activeBot, true); }
-      else { sendMessage('Не удалось распознать 😔 ' + JSON.stringify(data), activeBot, true); }
-    } catch (e) {
-      console.log('Ошибка stopRecording:', e);
-      sendMessage('Ошибка: ' + e.message, activeBot, true);
-    }
-  };
+  const rec = audioRecorderRef.current;
+  if (!rec) return;
+
+  setIsRecording(false);
+
+  await rec.stopAndUnloadAsync();
+  const uri = rec.getURI();
+
+  if (!uri) {
+    sendMessage('URI пустой 😔', activeBot, true);
+    return;
+  }
+
+  const text = await sendAudioToServer(uri);
+
+  if (text) {
+    sendMessage(text, 'dee', true);
+  } else {
+    sendMessage('Не удалось распознать 😔', 'dee', true);
+  }
+};
+
 
   const renderOnboarding = () => {
     const steps = [
