@@ -145,8 +145,6 @@ export default function App() {
   const [charModalOpen, setCharModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuAnim = useRef(new Animated.Value(-width)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const waveAnims = useRef([...Array(6)].map(() => new Animated.Value(0.3))).current;
   const [notesModalOpen, setNotesModalOpen] = useState(false);
   const [notes, setNotes] = useState([{ id: 1, text: 'Совет Awa: есть каждые 3-4 часа', done: false }]);
   const [newNote2, setNewNote2] = useState('');
