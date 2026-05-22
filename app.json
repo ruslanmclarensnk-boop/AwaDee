@@ -13,6 +13,14 @@
         {
           "microphonePermission": "Разреши AwaDee доступ к микрофону"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
     "splash": {
