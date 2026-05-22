@@ -299,27 +299,7 @@ export default function App() {
       }, 150);
     }
   }, [activeBot, isLoading, messages, onTheGoMessages, awaChar, deeChar, userName]);
-  const sendAudioToServer = async (uri) => {
-  try {
-    const form = new FormData();
-    form.append("file", {
-      uri,
-      type: "audio/wav",
-      name: "voice.wav",
-    });
-
-    const res = await fetch("http://89.125.24.180:3000/transcribe", {
-      method: "POST",
-      body: form,
-    });
-
-    const data = await res.json();
-    return data.text || "";
-  } catch (e) {
-    console.log("Audio upload error:", e);
-    return "";
-  }
-};
+  
 
 
   const handleSOS = (type) => {
