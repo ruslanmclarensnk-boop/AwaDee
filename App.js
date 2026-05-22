@@ -462,54 +462,62 @@ export default function App() {
   };
 
       const startRecording = async () => {
-  try {
-    const { granted } = await Audio.requestPermissionsAsync();
-    if (!granted) {
-      sendMessage('❌ Нет разрешения на микрофон', activeBot, true);
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) {
+        sendMessage('❌ Нет разрешения на микрофон', activeBot, true);
+        return;
+      }
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true
+      });
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      audioRecorderRef.current = recording;
+      setIsRecording(true);
+      sendMessage('🎙 Запись началась', activeBot, true);
+    } catch (e) {
+      sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
+    }
+  };
+
+  const stopRecording = async () => {
+    const rec = audioRecorderRef.current;
+    if (!rec) return;
+    setIsRecording(false);
+    await rec.stopAndUnloadAsync();
+    const uri = rec.getURI();
+    if (!uri) {
+      sendMessage('URI пустой 😔', activeBot, true);
       return;
     }
+    const text = await sendAudioToServer(uri);
+    if (text) {
+      sendMessage(text, 'dee', true);
+    } else {
+      sendMessage('Не удалось распознать 😔', 'dee', true);
+    }
+  };
 
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      playsInSilentModeIOS: true
-    });
-
-    const { recording } = await Audio.Recording.createAsync(
-      Audio.RecordingOptionsPresets.HIGH_QUALITY
-    );
-
-    audioRecorderRef.current = recording;
-    setIsRecording(true);
-
-    sendMessage('🎙 Запись началась', activeBot, true);
-
-  } catch (e) {
-    sendMessage('❌ startRecording упал: ' + e.message, activeBot, true);
-  }
-};
-
-    const stopRecording = async () => {
-  const rec = audioRecorderRef.current;
-  if (!rec) return;
-
-  setIsRecording(false);
-
-  await rec.stopAndUnloadAsync();
-  const uri = rec.getURI();
-
-  if (!uri) {
-    sendMessage('URI пустой 😔', activeBot, true);
-    return;
-  }
-
-  const text = await sendAudioToServer(uri);
-
-  if (text) {
-    sendMessage(text, 'dee', true);
-  } else {
-    sendMessage('Не удалось распознать 😔', 'dee', true);
-  }
-};
+  const sendAudioToServer = async (uri) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', { uri: uri, type: 'audio/m4a', name: 'audio.m4a' });
+      const res = await fetch('http://89.125.24.180:3000/transcribe', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      console.log('Server response:', JSON.stringify(data));
+      return data.text || '';
+    } catch (e) {
+      console.log('sendAudioToServer error:', e);
+      sendMessage('Ошибка сети: ' + e.message, activeBot, true);
+      return '';
+    }
+  };
 
 
   const renderOnboarding = () => {
