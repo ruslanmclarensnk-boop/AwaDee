@@ -451,10 +451,14 @@ export default function App() {
   };
     const stopRecording = async () => {
     try {
+      const recording = audioRecorderRef.current;
+      if (!recording) { sendMessage('Нет записи 😔', activeBot, true); return; }
       setIsRecording(false);
-      await audioRecorderRef.current?.stopAndUnloadAsync();
-      const uri = audioRecorderRef.current?.getURI();
-      if (!uri) return;
+      await recording.stopAndUnloadAsync();
+      audioRecorderRef.current = null;
+      const uri = recording.getURI();
+      console.log('URI:', uri);
+      if (!uri) { sendMessage('URI пустой 😔', activeBot, true); return; }
       const formData = new FormData();
       formData.append('file', { uri: uri, type: 'audio/m4a', name: 'audio.m4a' });
       const res = await fetch('http://89.125.24.180:3000/transcribe', {
@@ -463,8 +467,11 @@ export default function App() {
       });
       const data = await res.json();
       if (data.text) { sendMessage(data.text, activeBot, true); }
-      else { sendMessage('Не удалось распознать 😔', activeBot, true); }
-    } catch (e) { console.log('Ошибка:', e); sendMessage('Ошибка записи 😔', activeBot, true); }
+      else { sendMessage('Не удалось распознать 😔 ' + JSON.stringify(data), activeBot, true); }
+    } catch (e) {
+      console.log('Ошибка stopRecording:', e);
+      sendMessage('Ошибка: ' + e.message, activeBot, true);
+    }
   };
 
   const renderOnboarding = () => {
