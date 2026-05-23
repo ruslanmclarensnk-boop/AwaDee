@@ -141,6 +141,8 @@ export default function App() {
     dee: [{ id: 1, from: 'bot', text: '💙 Привет! Я Dee — твой лайф-коуч. Готова помочь разобраться в мыслях, найти баланс и двигаться вперёд. С чего начнём?' }],
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [awaMemory, setAwaMemory] = useState('');
+  const [deeMemory, setDeeMemory] = useState('');
   useEffect(() => {
   AsyncStorage.getItem('messages_awa').then(val => {
     if (val) setMessages(prev => ({ ...prev, awa: JSON.parse(val) }));
