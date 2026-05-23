@@ -208,13 +208,25 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorderRef = useRef(null);
  const [onTheGoAwaMessages, setOnTheGoAwaMessages] = useState([]);
-const [onTheGoDeeMessages, setOnTheGoDeeMessages] = useState([]);
+ const [onTheGoDeeMessages, setOnTheGoDeeMessages] = useState([]);
+  
   const scrollRef = useRef(null);
   const onTheGoScrollRef = useRef(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const waveAnims = useRef([...Array(6)].map(() => new Animated.Value(0.3))).current;
+  useEffect(() => {
+  AsyncStorage.getItem('onTheGo_awa').then(val => { if (val) setOnTheGoAwaMessages(JSON.parse(val)); });
+  AsyncStorage.getItem('onTheGo_dee').then(val => { if (val) setOnTheGoDeeMessages(JSON.parse(val)); });
+}, []);
 
+useEffect(() => {
+  AsyncStorage.setItem('onTheGo_awa', JSON.stringify(onTheGoAwaMessages));
+}, [onTheGoAwaMessages]);
+
+useEffect(() => {
+  AsyncStorage.setItem('onTheGo_dee', JSON.stringify(onTheGoDeeMessages));
+}, [onTheGoDeeMessages]);
   React.useEffect(() => {
   if (isRecording) {
     Animated.loop(Animated.sequence([
