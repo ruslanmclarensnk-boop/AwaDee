@@ -1866,4 +1866,3 @@ onTheGoMicTouchable: {
  justifyContent: 'center',
 },
 });
-}
