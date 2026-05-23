@@ -1792,6 +1792,7 @@ onTheGoMicBtn: {
   alignItems: 'center',
   justifyContent: 'center',
   shadowOffset: { width: 0, height: 6 },
+  overflow: 'hidden',
 },
 onTheGoMicTouchable: {
   width: 88,
