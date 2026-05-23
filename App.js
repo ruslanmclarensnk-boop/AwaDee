@@ -1863,6 +1863,7 @@ onTheGoMicTouchable: {
   height: 88,
   borderRadius: 44,
   alignItems: 'center',
-  justifyContent: 'center',
+ justifyContent: 'center',
 },
 });
+}
