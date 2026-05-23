@@ -495,7 +495,7 @@ export default function App() {
     if (text) {
       sendMessage(text, 'dee', true);
     } else {
-      sendMessage('Не удалось распознать 😔', 'dee', true);
+      console.log('STT: не удалось распознать');
     }
   };
 
