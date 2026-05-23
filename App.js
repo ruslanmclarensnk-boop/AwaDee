@@ -141,6 +141,19 @@ export default function App() {
     dee: [{ id: 1, from: 'bot', text: '💙 Привет! Я Dee — твой лайф-коуч. Готова помочь разобраться в мыслях, найти баланс и двигаться вперёд. С чего начнём?' }],
   });
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+  AsyncStorage.getItem('messages_awa').then(val => {
+    if (val) setMessages(prev => ({ ...prev, awa: JSON.parse(val) }));
+  });
+  AsyncStorage.getItem('messages_dee').then(val => {
+    if (val) setMessages(prev => ({ ...prev, dee: JSON.parse(val) }));
+  });
+}, []);
+
+useEffect(() => {
+  AsyncStorage.setItem('messages_awa', JSON.stringify(messages.awa));
+  AsyncStorage.setItem('messages_dee', JSON.stringify(messages.dee));
+}, [messages]);
   const [awaChar, setAwaChar] = useState('friendly');
   const [deeChar, setDeeChar] = useState('friendly');
   const [charModalOpen, setCharModalOpen] = useState(false);
