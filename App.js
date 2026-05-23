@@ -143,15 +143,16 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [awaMemory, setAwaMemory] = useState('');
   const [deeMemory, setDeeMemory] = useState('');
-  useEffect(() => {
+ useEffect(() => {
   AsyncStorage.getItem('messages_awa').then(val => {
     if (val) setMessages(prev => ({ ...prev, awa: JSON.parse(val) }));
   });
   AsyncStorage.getItem('messages_dee').then(val => {
     if (val) setMessages(prev => ({ ...prev, dee: JSON.parse(val) }));
   });
+  AsyncStorage.getItem('memory_awa').then(val => { if (val) setAwaMemory(val); });
+  AsyncStorage.getItem('memory_dee').then(val => { if (val) setDeeMemory(val); });
 }, []);
-
 useEffect(() => {
   AsyncStorage.setItem('messages_awa', JSON.stringify(messages.awa));
   AsyncStorage.setItem('messages_dee', JSON.stringify(messages.dee));
