@@ -944,8 +944,10 @@ const renderOnTheGo = () => {
       />
     </TouchableOpacity>
   </Animated.View>
-</View>
-);
+  </View>
+  </SafeAreaView>
+  );
+};
 
 const renderAwaSidebar = () => (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
