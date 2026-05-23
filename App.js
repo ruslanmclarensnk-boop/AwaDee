@@ -321,21 +321,10 @@ useEffect(() => {
 };
 
 const pickImage = async () => {
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    quality: 0.7,
-  });
-  if (!result.canceled) {
-    const uri = result.assets[0].uri;
-    const userMsg = { id: Date.now(), from: 'user', text: '📸 Фото отправлено' };
-    setMessages(prev => ({ ...prev, awa: [...prev.awa, userMsg] }));
-    setIsLoading(true);
-    const reply = await analyzeFood(uri);
-    const botMsg = { id: Date.now() + 1, from: 'bot', text: reply };
-    setMessages(prev => ({ ...prev, awa: [...prev.awa, botMsg] }));
-    setIsLoading(false);
-  }
-};const sendMessage = useCallback(async (text, targetBot, isOnTheGo) => {
+  Alert.alert('Скоро', 'Распознавание фото будет доступно в следующем обновлении');
+};
+
+const sendMessage = useCallback(async (text, targetBot, isOnTheGo) => {
     const bot = targetBot || activeBot;
     if (!text.trim() || isLoading) return;
     const userMsg = { id: Date.now(), from: 'user', text: text.trim() };
