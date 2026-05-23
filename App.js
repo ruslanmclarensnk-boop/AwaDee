@@ -805,6 +805,8 @@ const [onTheGoDeeMessages, setOnTheGoDeeMessages] = useState([]);
   );
 
 const renderOnTheGo = () => (
+  const onTheGoMessages = activeBot === 'awa' ? onTheGoAwaMessages : onTheGoDeeMessages;
+const setOnTheGoMessages = activeBot === 'awa' ? setOnTheGoAwaMessages : setOnTheGoDeeMessages;
   <SafeAreaView style={[styles.onTheGoScreen, { backgroundColor: theme }]}>
     <StatusBar barStyle="light-content" />
     <View style={styles.onTheGoHeader}>
