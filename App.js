@@ -9,7 +9,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+const AsyncStorage = { getItem: async () => null, setItem: async () => null };
 
 const AWA_IMG = null;
 const DEE_IMG = null;
