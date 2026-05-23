@@ -826,60 +826,63 @@ const renderOnTheGo = () => (
       {isLoading && <View style={styles.bubbleWrap}><View style={{ backgroundColor: '#F0F0F0', borderRadius: 20, padding: 12, paddingHorizontal: 16 }}><Text style={{ color: DEFAULT_C.sub, fontSize: 15 }}>✍️ печатает...</Text></View></View>}
     </ScrollView>
     <View style={styles.onTheGoBottom}>
-      {isRecording && (
-        <View style={styles.onTheGoWaveBar}>
-          {waveAnims.map((anim, i) => (
-            <Animated.View
-              key={i}
-              style={[
-                styles.onTheGoWaveStick,
-                {
-                  transform: [{ scaleY: anim }],
-                  backgroundColor: activeBot === 'awa' ? '#FF6B35' : '#4A90D9',
-                },
-              ]}
-            />
-          ))}
-          <Text style={[styles.onTheGoWaveLabel, { color: activeBot === 'awa' ? '#FF6B35' : '#4A90D9' }]}>
-            Говорю...
-          </Text>
-        </View>
-      )}
-      <Animated.View
-        style={[
-          styles.onTheGoMicBtn,
-          {
-            transform: [{ scale: pulseAnim }],
-            backgroundColor: isRecording
-              ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
-              : '#FFFFFF',
-            shadowColor: isRecording
-              ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
-              : '#000',
-            shadowOpacity: isRecording ? 0.6 : 0.15,
-            shadowRadius: isRecording ? 18 : 6,
-            elevation: isRecording ? 12 : 4,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          onPress={isRecording ? stopRecording : startRecording}
-          activeOpacity={0.85}
-          style={styles.onTheGoMicTouchable}
-        >
-          <Ionicons
-            name={isRecording ? 'stop' : 'mic'}
-            size={36}
-            color={
-              isRecording
-                ? '#FFFFFF'
-                : (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
-            }
+  {isRecording && (
+    <View style={styles.onTheGoWaveBar}>
+      <View style={styles.onTheGoWaveSticks}>
+        {waveAnims.map((anim, i) => (
+          <Animated.View
+            key={i}
+            style={[
+              styles.onTheGoWaveStick,
+              {
+                transform: [{ scaleY: anim }],
+                backgroundColor: activeBot === 'awa' ? '#FF6B35' : '#4A90D9',
+              },
+            ]}
           />
-        </TouchableOpacity>
-      </Animated.View>
+        ))}
+      </View>
+      <Text style={[styles.onTheGoWaveLabel, { color: activeBot === 'awa' ? '#FF6B35' : '#4A90D9' }]}>
+        Говорите...
+      </Text>
     </View>
-  </SafeAreaView>
+  )}
+  <Animated.View
+    style={[
+      styles.onTheGoMicBtn,
+      {
+        transform: [{ scale: pulseAnim }],
+        backgroundColor: isRecording
+          ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+          : '#FFFFFF',
+        borderWidth: isRecording ? 0 : 3,
+        borderColor: 'rgba(255,255,255,0.5)',
+        shadowColor: isRecording
+          ? (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+          : 'rgba(0,0,0,0.3)',
+        shadowOpacity: isRecording ? 0.7 : 0.4,
+        shadowRadius: isRecording ? 20 : 10,
+        elevation: isRecording ? 14 : 8,
+      },
+    ]}
+  >
+    <TouchableOpacity
+      onPress={isRecording ? stopRecording : startRecording}
+      activeOpacity={0.85}
+      style={styles.onTheGoMicTouchable}
+    >
+      <Ionicons
+        name={isRecording ? 'stop' : 'mic'}
+        size={36}
+        color={
+          isRecording
+            ? '#FFFFFF'
+            : (activeBot === 'awa' ? '#FF6B35' : '#4A90D9')
+        }
+      />
+    </TouchableOpacity>
+  </Animated.View>
+</View>
 );
 
 const renderAwaSidebar = () => (
