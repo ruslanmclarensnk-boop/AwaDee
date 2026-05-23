@@ -1718,14 +1718,19 @@ const renderAwaSidebar = () => (
         {isLoading && <View style={styles.bubbleWrap}><View style={styles.bubbleBot}><Text style={[styles.bubbleText, { color: DEFAULT_C.sub }]}>✍️ печатает...</Text></View></View>}
       </ScrollView>
       <View style={[styles.inputBar, { borderTopColor: theme + '25', marginBottom: 0 }]}>
-        <TouchableOpacity onPress={() => setCharModalOpen(true)} style={[styles.charChip, { borderColor: theme + '60' }]}>
-          <Text style={{ fontSize: 13 }}>{CHARACTERS.find(c => c.id === activeChar)?.emoji}</Text>
-        </TouchableOpacity>
-        <TextInput style={styles.inputField} placeholder={'Написать ' + (activeBot === 'awa' ? 'Awa' : 'Dee') + '...'} placeholderTextColor={DEFAULT_C.sub} value={inputText} onChangeText={setInputText} multiline maxLength={500} />
-        <TouchableOpacity style={[styles.sendBtn, { backgroundColor: theme }]} onPress={() => inputText.trim() ? sendMessage(inputText) : null}>
-          <Ionicons name="send-outline" size={18} color="#fff" />
-        </TouchableOpacity>
-      </View>
+  <TouchableOpacity onPress={() => setCharModalOpen(true)} style={[styles.charChip, { borderColor: theme + '60' }]}>
+    <Text style={{ fontSize: 13 }}>{CHARACTERS.find(c => c.id === activeChar)?.emoji}</Text>
+  </TouchableOpacity>
+  {activeBot === 'awa' && (
+    <TouchableOpacity onPress={pickImage} style={{ padding: 8 }}>
+      <Ionicons name="camera-outline" size={22} color={theme} />
+    </TouchableOpacity>
+  )}
+  <TextInput style={styles.inputField} placeholder={'Написать ' + (activeBot === 'awa' ? 'Awa' : 'Dee') + '...'} placeholderTextColor={DEFAULT_C.sub} value={inputText} onChangeText={setInputText} multiline maxLength={500} />
+  <TouchableOpacity style={[styles.sendBtn, { backgroundColor: theme }]} onPress={() => inputText.trim() ? sendMessage(inputText) : null}>
+    <Ionicons name="send-outline" size={18} color="#fff" />
+  </TouchableOpacity>
+</View>
     </KeyboardAvoidingView>
   );
 
