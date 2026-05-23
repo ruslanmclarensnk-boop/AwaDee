@@ -138,7 +138,7 @@ export default function App() {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState({
     awa: [{ id: 1, from: 'bot', text: '👋 Привет! Я Awa, твой нутрициолог. Готова помочь с питанием, рецептами и энергией. С чего начнём?' }],
-    dee: [{ id: 1, from: 'bot', text: '💙 Привет! Я Dee, твой психолог. Здесь безопасно говорить обо всём. Как ты сейчас?' }],
+    dee: [{ id: 1, from: 'bot', text: '💙 Привет! Я Dee — твой лайф-коуч. Готова помочь разобраться в мыслях, найти баланс и двигаться вперёд. С чего начнём?' }],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [awaChar, setAwaChar] = useState('friendly');
