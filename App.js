@@ -547,7 +547,7 @@ useEffect(() => {
           <View style={[styles.onboardBotCard, { borderColor: DEFAULT_C.dee }]}>
             <Text style={{ fontSize: 32 }}>💙</Text>
             <Text style={[styles.onboardBotName, { color: DEFAULT_C.dee }]}>Dee</Text>
-            <Text style={styles.onboardBotDesc}>Психолог. Поддерживает, помогает с эмоциями и ведёт дневник</Text>
+           <Text style={styles.onboardBotDesc}>Коуч по жизни. Разберёмся в эмоциях, целях и найдём твой путь вместе</Text>
           </View>
         </View>
         <TextInput style={styles.onboardInput} placeholder="Как тебя зовут?" placeholderTextColor={DEFAULT_C.sub} value={userName} onChangeText={setUserName} />
