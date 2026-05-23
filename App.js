@@ -862,9 +862,10 @@ const persona = bot === 'awa'
     </Modal>
   );
 
-const renderOnTheGo = () => (
+const renderOnTheGo = () => {
   const onTheGoMessages = activeBot === 'awa' ? onTheGoAwaMessages : onTheGoDeeMessages;
-const setOnTheGoMessages = activeBot === 'awa' ? setOnTheGoAwaMessages : setOnTheGoDeeMessages;
+  const setOnTheGoMessages = activeBot === 'awa' ? setOnTheGoAwaMessages : setOnTheGoDeeMessages;
+  return (
   <SafeAreaView style={[styles.onTheGoScreen, { backgroundColor: theme }]}>
     <StatusBar barStyle="light-content" />
     <View style={styles.onTheGoHeader}>
