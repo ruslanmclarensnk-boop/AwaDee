@@ -206,7 +206,8 @@ export default function App() {
   const [onTheGoInput, setOnTheGoInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorderRef = useRef(null);
-  const [onTheGoMessages, setOnTheGoMessages] = useState([]);
+ const [onTheGoAwaMessages, setOnTheGoAwaMessages] = useState([]);
+const [onTheGoDeeMessages, setOnTheGoDeeMessages] = useState([]);
   const scrollRef = useRef(null);
   const onTheGoScrollRef = useRef(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
