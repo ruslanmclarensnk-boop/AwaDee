@@ -335,6 +335,34 @@ const persona = bot === 'awa'
       } else {
         setMessages(prev => ({ ...prev, [bot]: [...prev[bot], botMsg] }));
       }
+      try {
+        const memoryApi = bot === 'awa' ? 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions' : 'https://api.deepseek.com/chat/completions';
+        const memoryKey = bot === 'awa' ? QWEN_KEY : DEEPSEEK_KEY;
+        const memoryModel = bot === 'awa' ? 'qwen-turbo' : 'deepseek-chat';
+        const currentMemory = bot === 'awa' ? awaMemory : deeMemory;
+        const memRes = await fetch(memoryApi, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + memoryKey },
+          body: JSON.stringify({
+            model: memoryModel,
+            messages: [
+              { role: 'system', content: 'Ты — система памяти. Получаешь старое резюме и новый диалог. Обнови резюме — кратко, 3-5 фактов о пользователе: имя, цели, темы, настроение, важные детали. Только факты, без воды. По-русски.' },
+              { role: 'user', content: 'Старое резюме: ' + (currentMemory || 'нет') + '\nНовый диалог:\nПользователь: ' + text.trim() + '\nБот: ' + reply },
+            ],
+          }),
+        });
+        const memData = await memRes.json();
+        const newMemory = memData.choices?.[0]?.message?.content || currentMemory;
+        if (bot === 'awa') {
+          setAwaMemory(newMemory);
+          AsyncStorage.setItem('memory_awa', newMemory);
+        } else {
+          setDeeMemory(newMemory);
+          AsyncStorage.setItem('memory_dee', newMemory);
+        }
+      } catch {
+        console.log('memory update failed');
+      }
     } catch {
       const errMsg = { id: Date.now() + 1, from: 'bot', text: 'Нет связи 😔 Попробуй ещё раз!' };
       if (isOnTheGo) {
@@ -348,7 +376,7 @@ const persona = bot === 'awa'
         isOnTheGo ? onTheGoScrollRef.current?.scrollToEnd({ animated: true }) : scrollRef.current?.scrollToEnd({ animated: true });
       }, 150);
     }
-  }, [activeBot, isLoading, messages, onTheGoMessages, awaChar, deeChar, userName]);
+  }, [activeBot, isLoading, messages, onTheGoMessages, awaChar, deeChar, userName, awaMemory, deeMemory]);
   
 
 
