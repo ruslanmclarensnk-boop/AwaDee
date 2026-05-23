@@ -290,7 +290,49 @@ useEffect(() => {
     }
   };
 
-  const sendMessage = useCallback(async (text, targetBot, isOnTheGo) => {
+  const analyzeFood = async (imageUri) => {
+  try {
+    const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
+    const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + QWEN_KEY },
+      body: JSON.stringify({
+        model: 'qwen3-vl-plus-2025-12-19',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + base64 } },
+              { type: 'text', text: 'Определи что на фото. Если это еда — напиши название блюда и примерное КБЖУ на 100г: калории, белки, жиры, углеводы. Отвечай по-русски, кратко, без markdown.' },
+            ],
+          },
+        ],
+      }),
+    });
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || 'Не удалось определить блюдо';
+  } catch (e) {
+    console.log('analyzeFood error:', e);
+    return 'Ошибка при анализе фото';
+  }
+};
+
+const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    quality: 0.7,
+  });
+  if (!result.canceled) {
+    const uri = result.assets[0].uri;
+    const userMsg = { id: Date.now(), from: 'user', text: '📸 Фото отправлено' };
+    setMessages(prev => ({ ...prev, awa: [...prev.awa, userMsg] }));
+    setIsLoading(true);
+    const reply = await analyzeFood(uri);
+    const botMsg = { id: Date.now() + 1, from: 'bot', text: reply };
+    setMessages(prev => ({ ...prev, awa: [...prev.awa, botMsg] }));
+    setIsLoading(false);
+  }
+};const sendMessage = useCallback(async (text, targetBot, isOnTheGo) => {
     const bot = targetBot || activeBot;
     if (!text.trim() || isLoading) return;
     const userMsg = { id: Date.now(), from: 'user', text: text.trim() };
