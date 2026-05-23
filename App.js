@@ -1865,3 +1865,4 @@ onTheGoMicTouchable: {
   alignItems: 'center',
   justifyContent: 'center',
 },
+});
