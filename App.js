@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
   StyleSheet, Dimensions, Animated, KeyboardAvoidingView,
-  Platform, SafeAreaView, StatusBar, Modal, Image, Keyboard,
+  Platform, SafeAreaView, StatusBar, Modal, Image, Keyboard, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
