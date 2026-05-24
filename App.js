@@ -591,7 +591,7 @@ const historyMessages = isOnTheGo ? onTheGoMessages : messages[bot];
     }
     const text = await sendAudioToServer(uri);
     if (text) {
-      sendMessage(text, 'dee', true);
+      sendMessage(text, activeBot, true);
     } else {
       console.log('STT: не удалось распознать');
     }
