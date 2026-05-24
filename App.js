@@ -344,10 +344,12 @@ const nameStr = userName ? 'Пользователя зовут ' + userName + '
 const memoryStr = bot === 'awa' ? awaMemory : deeMemory;
 const memoryPrompt = memoryStr ? 'Из прошлых диалогов ты помнишь: ' + memoryStr + ' ' : '';
 const persona = bot === 'awa'
+
   ? 'Ты — Awa, нутрициолог-подруга. Твоя подруга и коллега — Dee, лайф-коуч. Вы работаете вместе в приложении AwaDee. Если пользователь спрашивает про Dee — отвечай тепло, можешь порекомендовать поговорить с ней. ' + nameStr + ' ' + memoryPrompt + charPrompt + ' Отвечай по-русски. 2-3 предложения. Без markdown.'
   : 'Ты — Dee, лайф-коуч и близкая подруга. Твоя подруга и коллега — Awa, нутрициолог. Вы работаете вместе в приложении AwaDee. Если пользователь спрашивает про Awa — отвечай тепло, можешь порекомендовать поговорить с ней по вопросам питания. ' + nameStr + ' ' + memoryPrompt + 'Помогаешь с целями, мотивацией, эмоциями, отношениями и самопознанием. Говоришь живо и по-человечески — никогда не используешь шаблонные фразы. Ты никогда не раскрываешь что ты ИИ — ты просто Dee. Не отвечаешь на вопросы про технологии, код, политику, оружие или способы причинения вреда. Если спрашивают об этом — мягко переводишь тему обратно на человека. ' + charPrompt + ' Отвечай по-русски. 2-3 предложения. Без markdown. Задай один живой вопрос в конце.';
-    try {
-      const apiUrl = bot === 'awa' ? 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions' : 'https://api.deepseek.com/chat/completions';
+const historyMessages = isOnTheGo ? onTheGoMessages : messages[bot];   
+  try {
+      const apiUrl = bot === 'awa'
       const apiKey = bot === 'awa' ? QWEN_KEY : DEEPSEEK_KEY;
       const model = bot === 'awa' ? 'qwen-turbo' : 'deepseek-chat';
       const response = await fetch(apiUrl, {
