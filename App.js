@@ -415,7 +415,7 @@ const historyMessages = isOnTheGo ? onTheGoMessages : messages[bot];
         isOnTheGo ? onTheGoScrollRef.current?.scrollToEnd({ animated: true }) : scrollRef.current?.scrollToEnd({ animated: true });
       }, 150);
     }
-  }, [activeBot, isLoading, messages, onTheGoMessages, awaChar, deeChar, userName, awaMemory, deeMemory]);
+  }, [activeBot, isLoading, messages, onTheGoAwaMessages, onTheGoDeeMessages, awaChar, deeChar, userName, awaMemory, deeMemory]);
   
 
 
